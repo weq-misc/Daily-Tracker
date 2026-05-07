@@ -1,87 +1,427 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jack's Level Up Tracker</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
+      font-family: Arial, sans-serif;
       background: #050505;
       color: white;
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
       padding: 20px;
     }
 
-    h1 {
+    .container { max-width: 950px; margin: auto; }
+
+    .hero {
+      background: linear-gradient(135deg, #111, #1f1f1f);
+      border: 1px solid #333;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.04);
+    }
+
+    .hero h1 { font-size: 34px; margin-bottom: 8px; }
+    .hero p { color: #aaa; line-height: 1.5; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 18px;
+      padding: 18px;
       text-align: center;
     }
 
-    .card {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 15px;
-      padding: 20px;
-      margin: 15px 0;
+    .stat h2 { font-size: 28px; }
+    .stat p { color: #aaa; margin-top: 5px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
     }
 
-    input {
-      width: 70%;
+    .card {
+      background: #101010;
+      border: 1px solid #303030;
+      border-radius: 22px;
+      padding: 20px;
+    }
+
+    .card h2 { margin-bottom: 12px; font-size: 22px; }
+
+    .habit {
+      display: grid;
+      grid-template-columns: 85px 1fr auto auto;
+      align-items: center;
+      gap: 8px;
+      background: #181818;
+      border-radius: 14px;
       padding: 12px;
-      border-radius: 10px;
+      margin: 10px 0;
+      border: 1px solid #292929;
+    }
+
+    .habit.done {
+      background: #0d2a17;
+      border-color: #1f7a3a;
+      color: #b6ffca;
+    }
+
+    .habit-time {
+      color: #cfcfcf;
+      font-size: 13px;
+      background: #242424;
+      padding: 7px;
+      border-radius: 9px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .habit span {
+      cursor: pointer;
+      line-height: 1.3;
+    }
+
+    .habit.done span { text-decoration: line-through; }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
       border: none;
-      background: #222;
+      border-radius: 12px;
+      margin: 8px 0;
+      background: #1d1d1d;
       color: white;
+      outline: none;
     }
 
     button {
-      padding: 12px;
+      padding: 10px 12px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: white;
       color: black;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 8px;
     }
 
+    .full-btn { width: 100%; }
+    .small-btn { width: auto; font-size: 12px; margin-top: 0; }
+    .delete-btn { background: #ff4d4d; color: white; }
+    .edit-btn { background: #d9d9d9; color: black; }
+
+    button:hover { opacity: 0.85; }
+
+    ul { list-style: none; margin-top: 10px; }
+
     li {
-      margin: 10px 0;
-      background: #1a1a1a;
-      padding: 10px;
-      border-radius: 10px;
+      background: #181818;
+      padding: 11px;
+      border-radius: 12px;
+      margin: 8px 0;
+      border: 1px solid #292929;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .task-time {
+      color: #bbb;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 8px;
+    }
+
+    .quote { color: #ccc; font-style: italic; margin-top: 8px; }
+    .small { color: #888; font-size: 14px; margin-top: 8px; line-height: 1.4; }
+
+    @media (max-width: 520px) {
+      .habit {
+        grid-template-columns: 1fr;
+      }
+
+      .habit-time {
+        text-align: left;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <section class="hero">
+      <h1 id="mainTitle" contenteditable="true">Jack's Level Up Tracker</h1>
+      <p id="mainDesc" contenteditable="true">Track the stuff that actually matters: physique, looks, grades, sleep, and discipline. Don’t overthink it. Just check things off daily.</p>
+      <p class="quote" id="mainQuote" contenteditable="true">“Small wins every day = different person in 6 months.”</p>
+      <button class="full-btn" onclick="saveHeader()">Save Title/Quote</button>
+    </section>
 
-  <h1>Daily Tracker</h1>
+    <section class="stats">
+      <div class="stat"><h2 id="doneCount">0</h2><p>Habits Done</p></div>
+      <div class="stat"><h2 id="totalCount">0</h2><p>Total Habits</p></div>
+      <div class="stat"><h2 id="percent">0%</h2><p>Daily Score</p></div>
+    </section>
 
-  <div class="card">
-    <h2>Add Task</h2>
-    <input id="taskInput" placeholder="Example: workout, homework, skincare">
-    <button onclick="addTask()">Add</button>
-  </div>
+    <section class="grid">
+      <div class="card">
+        <h2>Editable Schedule</h2>
+        <div class="row">
+          <input id="habitTimeInput" placeholder="Time: 6:30 AM" />
+          <input id="habitInput" placeholder="Habit: wake up, workout, study..." />
+        </div>
+        <button class="full-btn" onclick="addHabit()">Add Time + Habit</button>
+        <div id="habitList"></div>
+        <button class="full-btn" onclick="saveHabits()">Save Schedule</button>
+        <button class="full-btn delete-btn" onclick="resetHabits()">Reset Schedule</button>
+        <p class="small">Click the habit name to mark it done. Click the time or Edit to change it. Press X to delete.</p>
+      </div>
 
-  <div class="card">
-    <h2>Today</h2>
-    <ul id="taskList"></ul>
+      <div class="card">
+        <h2>Extra Tasks</h2>
+        <div class="row">
+          <input id="taskTimeInput" placeholder="Time: 8:00 PM" />
+          <input id="taskInput" placeholder="Task: finish math, clean room..." />
+        </div>
+        <button class="full-btn" onclick="addTask()">Add Task</button>
+        <ul id="taskList"></ul>
+        <button class="full-btn" onclick="saveTasks()">Save Tasks</button>
+        <button class="full-btn delete-btn" onclick="clearTasks()">Clear Tasks</button>
+      </div>
+
+      <div class="card">
+        <h2>Workout Notes</h2>
+        <textarea id="workoutNotes" rows="7" placeholder="Example: Pushups 7/7/6, shoulder press, lateral raises..."></textarea>
+        <button class="full-btn" onclick="saveNotes('workoutNotes')">Save Workout Notes</button>
+      </div>
+
+      <div class="card">
+        <h2>Day Summary</h2>
+        <textarea id="daySummary" rows="7" placeholder="How did today go? What did you mess up? What did you improve?"></textarea>
+        <button class="full-btn" onclick="saveNotes('daySummary')">Save Day Summary</button>
+      </div>
+    </section>
   </div>
 
   <script>
-    function addTask() {
-      let input = document.getElementById("taskInput");
-      let task = input.value;
+    let habits = JSON.parse(localStorage.getItem('habits')) || [
+      { time: '6:30 AM', text: 'Wake up. No snooze.', done: false },
+      { time: '6:35 AM', text: 'Brush teeth + wash face', done: false },
+      { time: 'After school', text: 'Homework / study first', done: false },
+      { time: '7:00 PM', text: 'Workout / pushups / abs', done: false },
+      { time: '9:30 PM', text: 'Skincare + shower', done: false },
+      { time: '10:30 PM', text: 'Put phone down and sleep before it gets bad', done: false }
+    ];
 
-      if (task.trim() === "") return;
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-      let li = document.createElement("li");
-      li.innerHTML = "⬜ " + task;
+    function renderHabits() {
+      const list = document.getElementById('habitList');
+      list.innerHTML = '';
 
-      li.onclick = function() {
-        li.innerHTML = "✅ " + task;
-      };
+      habits.forEach((habit, index) => {
+        const div = document.createElement('div');
+        div.className = 'habit' + (habit.done ? ' done' : '');
 
-      document.getElementById("taskList").appendChild(li);
-      input.value = "";
+        const time = document.createElement('div');
+        time.className = 'habit-time';
+        time.textContent = habit.time || 'Anytime';
+        time.onclick = () => editTime(index);
+
+        const span = document.createElement('span');
+        span.textContent = habit.text;
+        span.onclick = () => toggleHabit(index);
+
+        const edit = document.createElement('button');
+        edit.className = 'small-btn edit-btn';
+        edit.textContent = 'Edit';
+        edit.onclick = () => editHabit(index);
+
+        const del = document.createElement('button');
+        del.className = 'small-btn delete-btn';
+        del.textContent = 'X';
+        del.onclick = () => deleteHabit(index);
+
+        div.appendChild(time);
+        div.appendChild(span);
+        div.appendChild(edit);
+        div.appendChild(del);
+        list.appendChild(div);
+      });
+
+      updateStats();
     }
-  </script>
 
+    function addHabit() {
+      const timeInput = document.getElementById('habitTimeInput');
+      const habitInput = document.getElementById('habitInput');
+      const time = timeInput.value.trim() || 'Anytime';
+      const text = habitInput.value.trim();
+      if (!text) return;
+      habits.push({ time: time, text: text, done: false });
+      timeInput.value = '';
+      habitInput.value = '';
+      saveHabits();
+      renderHabits();
+    }
+
+    function toggleHabit(index) {
+      habits[index].done = !habits[index].done;
+      saveHabits();
+      renderHabits();
+    }
+
+    function editTime(index) {
+      const newTime = prompt('Edit the time:', habits[index].time || 'Anytime');
+      if (newTime && newTime.trim() !== '') {
+        habits[index].time = newTime.trim();
+        saveHabits();
+        renderHabits();
+      }
+    }
+
+    function editHabit(index) {
+      const newTime = prompt('Edit the time:', habits[index].time || 'Anytime');
+      const newText = prompt('Edit what to do:', habits[index].text);
+      if (newTime && newTime.trim() !== '') habits[index].time = newTime.trim();
+      if (newText && newText.trim() !== '') habits[index].text = newText.trim();
+      saveHabits();
+      renderHabits();
+    }
+
+    function deleteHabit(index) {
+      habits.splice(index, 1);
+      saveHabits();
+      renderHabits();
+    }
+
+    function saveHabits() {
+      localStorage.setItem('habits', JSON.stringify(habits));
+    }
+
+    function resetHabits() {
+      localStorage.removeItem('habits');
+      location.reload();
+    }
+
+    function updateStats() {
+      const done = habits.filter(h => h.done).length;
+      const total = habits.length;
+      document.getElementById('doneCount').textContent = done;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('percent').textContent = total ? Math.round((done / total) * 100) + '%' : '0%';
+    }
+
+    function renderTasks() {
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        const span = document.createElement('span');
+        span.innerHTML = '<span class="task-time">' + (task.time || 'Anytime') + '</span>' + (task.done ? '✅ ' : '⬜ ') + task.text;
+        span.style.cursor = 'pointer';
+        span.onclick = () => {
+          tasks[index].done = !tasks[index].done;
+          saveTasks();
+          renderTasks();
+        };
+
+        const edit = document.createElement('button');
+        edit.className = 'small-btn edit-btn';
+        edit.textContent = 'Edit';
+        edit.onclick = () => editTask(index);
+
+        const del = document.createElement('button');
+        del.className = 'small-btn delete-btn';
+        del.textContent = 'X';
+        del.onclick = () => {
+          tasks.splice(index, 1);
+          saveTasks();
+          renderTasks();
+        };
+
+        li.appendChild(span);
+        li.appendChild(edit);
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const timeInput = document.getElementById('taskTimeInput');
+      const taskInput = document.getElementById('taskInput');
+      const time = timeInput.value.trim() || 'Anytime';
+      const text = taskInput.value.trim();
+      if (!text) return;
+      tasks.push({ time: time, text: text, done: false });
+      timeInput.value = '';
+      taskInput.value = '';
+      saveTasks();
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const newTime = prompt('Edit task time:', tasks[index].time || 'Anytime');
+      const newText = prompt('Edit task:', tasks[index].text);
+      if (newTime && newTime.trim() !== '') tasks[index].time = newTime.trim();
+      if (newText && newText.trim() !== '') tasks[index].text = newText.trim();
+      saveTasks();
+      renderTasks();
+    }
+
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function clearTasks() {
+      tasks = [];
+      saveTasks();
+      renderTasks();
+    }
+
+    function saveNotes(id) {
+      localStorage.setItem(id, document.getElementById(id).value);
+      alert('Saved.');
+    }
+
+    function saveHeader() {
+      localStorage.setItem('mainTitle', document.getElementById('mainTitle').innerText);
+      localStorage.setItem('mainDesc', document.getElementById('mainDesc').innerText);
+      localStorage.setItem('mainQuote', document.getElementById('mainQuote').innerText);
+      alert('Saved.');
+    }
+
+    window.onload = function() {
+      document.getElementById('workoutNotes').value = localStorage.getItem('workoutNotes') || '';
+      document.getElementById('daySummary').value = localStorage.getItem('daySummary') || '';
+      document.getElementById('mainTitle').innerText = localStorage.getItem('mainTitle') || document.getElementById('mainTitle').innerText;
+      document.getElementById('mainDesc').innerText = localStorage.getItem('mainDesc') || document.getElementById('mainDesc').innerText;
+      document.getElementById('mainQuote').innerText = localStorage.getItem('mainQuote') || document.getElementById('mainQuote').innerText;
+      renderHabits();
+      renderTasks();
+    };
+  </script>
 </body>
 </html>
