@@ -9,11 +9,9 @@
   <meta name="apple-mobile-web-app-title" content="Tracker" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>Daily Tracker</title>
-
   <link rel="stylesheet" href="style.css" />
   <script src="app.js" defer></script>
 </head>
-
 <body>
   <div class="container">
     <section class="hero">
@@ -23,11 +21,7 @@
       </div>
 
       <h1 id="mainTitle" contenteditable="true">Daily Tracker</h1>
-
-      <p id="mainDesc" contenteditable="true">
-        Track the stuff that actually matters: physique, looks, grades, sleep, and discipline.
-        Keep it simple. Check things off daily.
-      </p>
+      <p id="mainDesc" contenteditable="true">Track the stuff that actually matters: physique, looks, grades, sleep, and discipline. Keep it simple. Check things off daily.</p>
 
       <div class="quote-box">
         <div class="quote-label" id="quoteLabel">Motivation</div>
@@ -47,30 +41,11 @@
     </section>
 
     <section class="stats">
-      <div class="stat">
-        <h2 id="doneCount">0</h2>
-        <p>Habits Done</p>
-      </div>
-
-      <div class="stat">
-        <h2 id="totalCount">0</h2>
-        <p>Total Habits</p>
-      </div>
-
-      <div class="stat">
-        <h2 id="percent">0%</h2>
-        <p>Daily Score</p>
-      </div>
-
-      <div class="stat">
-        <h2 id="streakCount">0</h2>
-        <p>Day Streak</p>
-      </div>
-
-      <div class="stat">
-        <h2 id="weekAvg">0%</h2>
-        <p>7-Day Avg</p>
-      </div>
+      <div class="stat"><h2 id="doneCount">0</h2><p>Habits Done</p></div>
+      <div class="stat"><h2 id="totalCount">0</h2><p>Total Habits</p></div>
+      <div class="stat"><h2 id="percent">0%</h2><p>Daily Score</p></div>
+      <div class="stat"><h2 id="streakCount">0</h2><p>Day Streak</p></div>
+      <div class="stat"><h2 id="weekAvg">0%</h2><p>7-Day Avg</p></div>
     </section>
 
     <section class="progress-card">
@@ -78,30 +53,24 @@
         <span>Daily Progress</span>
         <span id="progressText">0 of 0 complete</span>
       </div>
-
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </section>
 
     <section class="grid">
       <div class="stack">
-        <div class="card">
+        <div class="section-label">Today</div>
+
+        <div class="card priority-card">
           <div class="card-header">
             <h2>Must-Do 3</h2>
             <button class="small-btn ghost-btn" onclick="saveMustDos()">Save</button>
           </div>
-
           <div class="task-row">
             <input id="mustInput" placeholder="Most important thing today..." />
             <button onclick="addMustDo()">Add</button>
           </div>
-
           <div id="mustList"></div>
-
-          <p class="hint">
-            Pick up to 3. These are the things that make today a win.
-          </p>
+          <p class="hint">Pick up to 3. These are the things that make today a win.</p>
         </div>
 
         <div class="card">
@@ -109,10 +78,8 @@
             <h2>Schedule</h2>
             <button class="small-btn ghost-btn" onclick="saveHabits()">Save</button>
           </div>
-
           <div class="form-row">
             <input id="habitTimeInput" placeholder="6:30 AM" />
-
             <select id="habitCategoryInput">
               <option>Gym</option>
               <option>Grades</option>
@@ -120,29 +87,36 @@
               <option>Sleep</option>
               <option>Discipline</option>
             </select>
-
             <input id="habitInput" placeholder="Wake up, workout, study..." />
           </div>
-
           <button class="full-btn" onclick="addHabit()">Add to Schedule</button>
-
           <div id="habitList"></div>
-
           <button class="full-btn danger-btn" onclick="resetHabits()">Reset Schedule</button>
+          <p class="hint">Tap the habit text to check it off. Tap the time/category to edit.</p>
+        </div>
 
-          <p class="hint">
-            Tap the habit text to check it off. Tap the time/category to edit.
-          </p>
+        <div class="card">
+          <div class="card-header">
+            <h2>Extra Tasks</h2>
+            <button class="small-btn ghost-btn" onclick="clearTasks()">Clear</button>
+          </div>
+          <div class="task-row">
+            <input id="taskTimeInput" placeholder="8:00 PM" />
+            <input id="taskInput" placeholder="Finish math, clean room..." />
+          </div>
+          <button class="full-btn" onclick="addTask()">Add Task</button>
+          <ul id="taskList"></ul>
         </div>
       </div>
 
       <div class="stack">
+        <div class="section-label">Progress + Tools</div>
+
         <div class="card">
           <div class="card-header">
             <h2>Categories</h2>
             <button class="small-btn ghost-btn" onclick="renderCategories()">Refresh</button>
           </div>
-
           <div class="category-grid" id="categoryGrid"></div>
         </div>
 
@@ -151,95 +125,54 @@
             <h2>Weekly Progress</h2>
             <button class="small-btn ghost-btn" onclick="finishDay()">Save Today</button>
           </div>
-
           <div id="weeklyList"></div>
-
-          <p class="hint">
-            Press Finish Day when you are done for the day.
-          </p>
+          <p class="hint">Press Finish Day when you are done for the day.</p>
         </div>
 
-        <div class="card">
+        <div class="card tool-card">
           <div class="card-header">
             <h2>Focus Timer</h2>
             <button class="small-btn ghost-btn" onclick="resetTimer()">Reset</button>
           </div>
-
           <div class="timer-display" id="timerDisplay">25:00</div>
-
           <div class="mini-grid">
             <button onclick="setTimer(25)">Study</button>
             <button onclick="setTimer(5)">Rest</button>
             <button onclick="setTimer(1)">1 Min</button>
           </div>
-
           <button class="full-btn" id="timerButton" onclick="toggleTimer()">Start Timer</button>
-
-          <p class="hint">
-            Use this for homework focus, workout rest, or phone-free time.
-          </p>
+          <p class="hint">Use this for homework focus, workout rest, or phone-free time.</p>
         </div>
 
-        <div class="card">
+        <div class="card tool-card">
           <div class="card-header">
             <h2>Backup</h2>
             <button class="small-btn ghost-btn" onclick="exportData()">Export</button>
           </div>
-
-          <textarea
-            class="backup-code"
-            id="backupBox"
-            placeholder="Press Export to make a backup code. Save it in Notes. Paste it here and press Import to restore."
-          ></textarea>
-
+          <textarea class="backup-code" id="backupBox" placeholder="Press Export to make a backup code. Save it in Notes. Paste it here and press Import to restore."></textarea>
           <div class="mini-grid">
             <button onclick="exportData()">Export</button>
             <button onclick="importData()">Import</button>
             <button class="danger-btn" onclick="clearBackupBox()">Clear</button>
           </div>
-
-          <p class="hint">
-            Important: your tracker saves on this device. Export sometimes so you don’t lose progress.
-          </p>
+          <p class="hint">Export sometimes so you don’t lose progress.</p>
         </div>
+      </div>
+    </section>
 
-        <div class="card">
-          <div class="card-header">
-            <h2>Extra Tasks</h2>
-            <button class="small-btn ghost-btn" onclick="clearTasks()">Clear</button>
-          </div>
+    <section class="notes-grid">
+      <div class="section-label full-label">Notes</div>
 
-          <div class="task-row">
-            <input id="taskTimeInput" placeholder="8:00 PM" />
-            <input id="taskInput" placeholder="Finish math, clean room..." />
-          </div>
+      <div class="card">
+        <h2>Workout Notes</h2>
+        <textarea id="workoutNotes" placeholder="Example: Pushups 7/7/6, shoulder press, lateral raises..."></textarea>
+        <button class="full-btn" onclick="saveNotes('workoutNotes')">Save Notes</button>
+      </div>
 
-          <button class="full-btn" onclick="addTask()">Add Task</button>
-
-          <ul id="taskList"></ul>
-        </div>
-
-        <div class="card">
-          <h2>Workout Notes</h2>
-
-          <textarea
-            id="workoutNotes"
-            placeholder="Example: Pushups 7/7/6, shoulder press, lateral raises..."
-          ></textarea>
-
-          <button class="full-btn" onclick="saveNotes('workoutNotes')">Save Notes</button>
-        </div>
-
-        <div class="card">
-          <h2>Day Summary</h2>
-
-          <textarea
-            id="daySummary"
-            placeholder="How did today go? What did you improve? What needs fixing tomorrow?"
-          ></textarea>
-
-          <button class="full-btn" onclick="saveNotes('daySummary')">Save Summary</button>
-        </div>
+      <div class="card">
+        <h2>Day Summary</h2>
+        <textarea id="daySummary" placeholder="How did today go? What did you improve? What needs fixing tomorrow?"></textarea>
+        <button class="full-btn" onclick="saveNotes('daySummary')">Save Summary</button>
       </div>
     </section>
   </div>
