@@ -530,13 +530,41 @@ li {
   box-shadow: 0 0 0 2px rgba(255,255,255,0.16);
   background: rgba(255,255,255,0.04);
 }
+.notes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
 
+.section-label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  padding-left: 4px;
+  margin-bottom: -4px;
+}
+
+.full-label {
+  grid-column: 1 / -1;
+  margin-bottom: -4px;
+}
+
+.priority-card {
+  border-color: #444;
+}
+
+.tool-card textarea {
+  min-height: 90px;
+}
 @media (max-width: 920px) {
   .stats {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .grid {
+  .grid,
+  .notes-grid {
     grid-template-columns: 1fr;
   }
 }
