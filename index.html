@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Tracker</title>
+  <style>
+    body {
+      background: #050505;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .card {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 15px 0;
+    }
+
+    input {
+      width: 70%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #222;
+      color: white;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    li {
+      margin: 10px 0;
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Daily Tracker</h1>
+
+  <div class="card">
+    <h2>Add Task</h2>
+    <input id="taskInput" placeholder="Example: workout, homework, skincare">
+    <button onclick="addTask()">Add</button>
+  </div>
+
+  <div class="card">
+    <h2>Today</h2>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    function addTask() {
+      let input = document.getElementById("taskInput");
+      let task = input.value;
+
+      if (task.trim() === "") return;
+
+      let li = document.createElement("li");
+      li.innerHTML = "⬜ " + task;
+
+      li.onclick = function() {
+        li.innerHTML = "✅ " + task;
+      };
+
+      document.getElementById("taskList").appendChild(li);
+      input.value = "";
+    }
+  </script>
+
+</body>
+</html>
