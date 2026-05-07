@@ -3,180 +3,387 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jack's Level Up Tracker</title>
+  <title>Daily Tracker</title>
   <style>
+    :root {
+      --bg: #050505;
+      --card: rgba(18, 18, 18, 0.92);
+      --card-2: #181818;
+      --line: #2c2c2c;
+      --text: #f5f5f5;
+      --muted: #9b9b9b;
+      --soft: #d7d7d7;
+      --good: #72f09a;
+      --danger: #ff5c5c;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #050505;
-      color: white;
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.05), transparent 28%),
+        var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      padding: 20px;
+      padding: 22px;
     }
 
-    .container { max-width: 950px; margin: auto; }
+    .container { max-width: 1050px; margin: auto; }
 
     .hero {
-      background: linear-gradient(135deg, #111, #1f1f1f);
-      border: 1px solid #333;
-      border-radius: 24px;
-      padding: 28px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 25px rgba(255,255,255,0.04);
+      background: linear-gradient(135deg, rgba(24,24,24,0.98), rgba(8,8,8,0.98));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 30px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
 
-    .hero h1 { font-size: 34px; margin-bottom: 8px; }
-    .hero p { color: #aaa; line-height: 1.5; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      filter: blur(8px);
+    }
+
+    .top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      background: #111;
+      color: var(--soft);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 6vw, 58px);
+      letter-spacing: -1.5px;
+      line-height: 0.95;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 760px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-box {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.045);
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .quote {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .stat {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 18px;
-      padding: 18px;
-      text-align: center;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.24);
     }
 
-    .stat h2 { font-size: 28px; }
-    .stat p { color: #aaa; margin-top: 5px; }
+    .stat h2 { font-size: 34px; letter-spacing: -1px; }
+    .stat p { color: var(--muted); margin-top: 4px; font-size: 14px; }
+
+    .progress-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .progress-track {
+      height: 13px;
+      background: #191919;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #303030;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f5f5f5, #7e7e7e);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: 1.2fr 0.8fr;
       gap: 16px;
+      align-items: start;
     }
+
+    .stack { display: grid; gap: 16px; }
 
     .card {
-      background: #101010;
-      border: 1px solid #303030;
-      border-radius: 22px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
       padding: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.24);
     }
 
-    .card h2 { margin-bottom: 12px; font-size: 22px; }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 { font-size: 21px; letter-spacing: -0.3px; }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 12px;
+    }
 
     .habit {
       display: grid;
-      grid-template-columns: 85px 1fr auto auto;
+      grid-template-columns: 90px 1fr auto;
       align-items: center;
-      gap: 8px;
-      background: #181818;
-      border-radius: 14px;
+      gap: 10px;
+      background: var(--card-2);
+      border-radius: 16px;
       padding: 12px;
       margin: 10px 0;
-      border: 1px solid #292929;
+      border: 1px solid var(--line);
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     }
+
+    .habit:hover, li:hover { transform: translateY(-1px); border-color: #484848; }
 
     .habit.done {
-      background: #0d2a17;
-      border-color: #1f7a3a;
-      color: #b6ffca;
+      background: rgba(39, 96, 53, 0.22);
+      border-color: rgba(114, 240, 154, 0.45);
+      color: #c8ffd7;
     }
 
-    .habit-time {
-      color: #cfcfcf;
-      font-size: 13px;
+    .habit-time, .task-time {
+      color: var(--soft);
+      font-size: 12px;
       background: #242424;
-      padding: 7px;
-      border-radius: 9px;
+      padding: 8px 9px;
+      border-radius: 11px;
       text-align: center;
       cursor: pointer;
+      border: 1px solid #343434;
     }
 
-    .habit span {
-      cursor: pointer;
-      line-height: 1.3;
-    }
+    .habit span { cursor: pointer; line-height: 1.35; }
+    .habit.done span { text-decoration: line-through; color: #c8ffd7; }
 
-    .habit.done span { text-decoration: line-through; }
+    .item-actions { display: flex; gap: 6px; }
 
     input, textarea {
       width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      margin: 8px 0;
-      background: #1d1d1d;
+      padding: 13px 14px;
+      border: 1px solid #2f2f2f;
+      border-radius: 14px;
+      background: #161616;
       color: white;
       outline: none;
+      font: inherit;
+      transition: border-color 0.15s ease, background 0.15s ease;
     }
+
+    input:focus, textarea:focus { border-color: #777; background: #1c1c1c; }
+    textarea { resize: vertical; min-height: 145px; }
 
     button {
-      padding: 10px 12px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background: white;
       color: black;
-      font-weight: bold;
+      font-weight: 800;
       cursor: pointer;
-      margin-top: 8px;
+      padding: 11px 14px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
     }
 
-    .full-btn { width: 100%; }
-    .small-btn { width: auto; font-size: 12px; margin-top: 0; }
-    .delete-btn { background: #ff4d4d; color: white; }
-    .edit-btn { background: #d9d9d9; color: black; }
+    button:hover { transform: translateY(-1px); opacity: 0.9; }
+    button:active { transform: translateY(0); }
 
-    button:hover { opacity: 0.85; }
+    .ghost-btn {
+      background: #1f1f1f;
+      color: white;
+      border: 1px solid #343434;
+    }
+
+    .danger-btn { background: var(--danger); color: white; }
+    .small-btn { font-size: 12px; padding: 8px 10px; border-radius: 11px; }
+    .full-btn { width: 100%; margin-top: 10px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
 
     ul { list-style: none; margin-top: 10px; }
 
     li {
-      background: #181818;
-      padding: 11px;
-      border-radius: 12px;
-      margin: 8px 0;
-      border: 1px solid #292929;
-      display: flex;
-      justify-content: space-between;
+      background: var(--card-2);
+      padding: 12px;
+      border-radius: 16px;
+      margin: 10px 0;
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
       gap: 8px;
       align-items: center;
+      transition: transform 0.15s ease, border-color 0.15s ease;
     }
 
-    .task-time {
-      color: #bbb;
-      font-size: 12px;
-      margin-right: 6px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 110px 1fr;
+    .task-main {
+      display: flex;
+      align-items: center;
       gap: 8px;
+      cursor: pointer;
+      line-height: 1.35;
     }
 
-    .quote { color: #ccc; font-style: italic; margin-top: 8px; }
-    .small { color: #888; font-size: 14px; margin-top: 8px; line-height: 1.4; }
+    .task-done { text-decoration: line-through; color: #c8ffd7; }
 
-    @media (max-width: 520px) {
-      .habit {
-        grid-template-columns: 1fr;
-      }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      background: white;
+      color: black;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s ease;
+      z-index: 20;
+    }
 
-      .habit-time {
-        text-align: left;
-      }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
-      .row {
-        grid-template-columns: 1fr;
-      }
+    [contenteditable="true"] {
+      outline: none;
+      border-radius: 10px;
+    }
+
+    [contenteditable="true"]:focus {
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.04);
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .hero { padding: 22px; border-radius: 24px; }
+      .stats { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .habit { grid-template-columns: 1fr; }
+      .habit-time { text-align: left; width: fit-content; }
+      .form-row { grid-template-columns: 1fr; }
+      .top-line { align-items: flex-start; flex-direction: column; }
+      li { grid-template-columns: 1fr; }
+      .item-actions { justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <section class="hero">
-      <h1 id="mainTitle" contenteditable="true">Jack's Level Up Tracker</h1>
-      <p id="mainDesc" contenteditable="true">Track the stuff that actually matters: physique, looks, grades, sleep, and discipline. Don’t overthink it. Just check things off daily.</p>
-      <p class="quote" id="mainQuote" contenteditable="true">“Small wins every day = different person in 6 months.”</p>
-      <button class="full-btn" onclick="saveHeader()">Save Title/Quote</button>
+      <div class="top-line">
+        <span class="badge" id="todayBadge">Today</span>
+        <span class="badge">Saved on this device</span>
+      </div>
+
+      <h1 id="mainTitle" contenteditable="true">Daily Tracker</h1>
+      <p id="mainDesc" contenteditable="true">Track the stuff that actually matters: physique, looks, grades, sleep, and discipline. Keep it simple. Check things off daily.</p>
+
+      <div class="quote-box">
+        <div class="quote-label" id="quoteLabel">Motivation</div>
+        <p class="quote" id="mainQuote">Loading your quote...</p>
+      </div>
+
+      <div class="actions">
+        <button onclick="saveHeader()">Save title</button>
+        <button class="ghost-btn" onclick="setRandomQuote()">New quote</button>
+        <button class="ghost-btn" onclick="resetToday()">Reset today</button>
+      </div>
     </section>
 
     <section class="stats">
@@ -185,48 +392,74 @@
       <div class="stat"><h2 id="percent">0%</h2><p>Daily Score</p></div>
     </section>
 
+    <section class="progress-card">
+      <div class="progress-top">
+        <span>Daily Progress</span>
+        <span id="progressText">0 of 0 complete</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </section>
+
     <section class="grid">
       <div class="card">
-        <h2>Editable Schedule</h2>
-        <div class="row">
-          <input id="habitTimeInput" placeholder="Time: 6:30 AM" />
-          <input id="habitInput" placeholder="Habit: wake up, workout, study..." />
+        <div class="card-header">
+          <h2>Schedule</h2>
+          <button class="small-btn ghost-btn" onclick="saveHabits()">Save</button>
         </div>
-        <button class="full-btn" onclick="addHabit()">Add Time + Habit</button>
+
+        <div class="form-row">
+          <input id="habitTimeInput" placeholder="6:30 AM" />
+          <input id="habitInput" placeholder="Wake up, workout, study..." />
+        </div>
+        <button class="full-btn" onclick="addHabit()">Add to Schedule</button>
+
         <div id="habitList"></div>
-        <button class="full-btn" onclick="saveHabits()">Save Schedule</button>
-        <button class="full-btn delete-btn" onclick="resetHabits()">Reset Schedule</button>
-        <p class="small">Click the habit name to mark it done. Click the time or Edit to change it. Press X to delete.</p>
+        <button class="full-btn danger-btn" onclick="resetHabits()">Reset Schedule</button>
+        <p class="hint">Tap the habit text to check it off. Tap the time to edit. Use Edit to change both.</p>
       </div>
 
-      <div class="card">
-        <h2>Extra Tasks</h2>
-        <div class="row">
-          <input id="taskTimeInput" placeholder="Time: 8:00 PM" />
-          <input id="taskInput" placeholder="Task: finish math, clean room..." />
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <h2>Extra Tasks</h2>
+            <button class="small-btn ghost-btn" onclick="clearTasks()">Clear</button>
+          </div>
+          <div class="form-row">
+            <input id="taskTimeInput" placeholder="8:00 PM" />
+            <input id="taskInput" placeholder="Finish math, clean room..." />
+          </div>
+          <button class="full-btn" onclick="addTask()">Add Task</button>
+          <ul id="taskList"></ul>
         </div>
-        <button class="full-btn" onclick="addTask()">Add Task</button>
-        <ul id="taskList"></ul>
-        <button class="full-btn" onclick="saveTasks()">Save Tasks</button>
-        <button class="full-btn delete-btn" onclick="clearTasks()">Clear Tasks</button>
-      </div>
 
-      <div class="card">
-        <h2>Workout Notes</h2>
-        <textarea id="workoutNotes" rows="7" placeholder="Example: Pushups 7/7/6, shoulder press, lateral raises..."></textarea>
-        <button class="full-btn" onclick="saveNotes('workoutNotes')">Save Workout Notes</button>
-      </div>
+        <div class="card">
+          <h2>Workout Notes</h2>
+          <textarea id="workoutNotes" placeholder="Example: Pushups 7/7/6, shoulder press, lateral raises..."></textarea>
+          <button class="full-btn" onclick="saveNotes('workoutNotes')">Save Notes</button>
+        </div>
 
-      <div class="card">
-        <h2>Day Summary</h2>
-        <textarea id="daySummary" rows="7" placeholder="How did today go? What did you mess up? What did you improve?"></textarea>
-        <button class="full-btn" onclick="saveNotes('daySummary')">Save Day Summary</button>
+        <div class="card">
+          <h2>Day Summary</h2>
+          <textarea id="daySummary" placeholder="How did today go? What did you improve? What needs fixing tomorrow?"></textarea>
+          <button class="full-btn" onclick="saveNotes('daySummary')">Save Summary</button>
+        </div>
       </div>
     </section>
   </div>
 
+  <div class="toast" id="toast">Saved</div>
+
   <script>
-    let habits = JSON.parse(localStorage.getItem('habits')) || [
+    const STORAGE = {
+      habits: 'tracker_habits',
+      tasks: 'tracker_tasks',
+      title: 'tracker_title',
+      desc: 'tracker_desc',
+      workout: 'tracker_workout_notes',
+      summary: 'tracker_day_summary'
+    };
+
+    const defaultHabits = [
       { time: '6:30 AM', text: 'Wake up. No snooze.', done: false },
       { time: '6:35 AM', text: 'Brush teeth + wash face', done: false },
       { time: 'After school', text: 'Homework / study first', done: false },
@@ -235,7 +468,83 @@
       { time: '10:30 PM', text: 'Put phone down and sleep before it gets bad', done: false }
     ];
 
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const morningQuotes = [
+      'Up early = better skin, better focus, better day.',
+      'No snooze. Get up and start improving.',
+      'Morning routine = looks + grades + discipline.',
+      'Hydrate, wash face, move your body.',
+      'Win the morning, everything gets easier.'
+    ];
+
+    const afternoonQuotes = [
+      'Homework first. Grades don’t fix themselves.',
+      'Lock in for 30 minutes. No distractions.',
+      'Study now = less stress later.',
+      'Do the work even if you don’t feel like it.',
+      'Consistency beats cramming.'
+    ];
+
+    const eveningQuotes = [
+      'Train. Your physique is built here.',
+      'Pushups, shoulders, abs—no skipping.',
+      'You don’t need motivation. Start the first set.',
+      'Good form > ego reps. Do it right.',
+      'Finish your workout. Then you can relax.'
+    ];
+
+    const nightQuotes = [
+      'Skincare, shower, then sleep.',
+      'Sleep is growth—for muscles and brain.',
+      'Put the phone down. Recovery matters.',
+      'Tomorrow’s results depend on tonight.',
+      'Rest like someone who has goals.'
+    ];
+
+    let habits = loadJSON(STORAGE.habits, defaultHabits);
+    let tasks = loadJSON(STORAGE.tasks, []);
+
+    function loadJSON(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) || fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function saveJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1300);
+    }
+
+    function getQuotePack() {
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 12) return { label: 'Morning focus', quotes: morningQuotes };
+      if (hour >= 12 && hour < 17) return { label: 'Afternoon grades', quotes: afternoonQuotes };
+      if (hour >= 17 && hour < 22) return { label: 'Evening gym', quotes: eveningQuotes };
+      return { label: 'Night recovery', quotes: nightQuotes };
+    }
+
+    function setRandomQuote() {
+      const pack = getQuotePack();
+      const quote = pack.quotes[Math.floor(Math.random() * pack.quotes.length)];
+      document.getElementById('quoteLabel').textContent = pack.label;
+      document.getElementById('mainQuote').textContent = '“' + quote + '”';
+    }
+
+    function setTodayBadge() {
+      const now = new Date();
+      document.getElementById('todayBadge').textContent = now.toLocaleDateString(undefined, {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
 
     function renderHabits() {
       const list = document.getElementById('habitList');
@@ -250,24 +559,25 @@
         time.textContent = habit.time || 'Anytime';
         time.onclick = () => editTime(index);
 
-        const span = document.createElement('span');
-        span.textContent = habit.text;
-        span.onclick = () => toggleHabit(index);
+        const text = document.createElement('span');
+        text.textContent = habit.text;
+        text.onclick = () => toggleHabit(index);
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
 
         const edit = document.createElement('button');
-        edit.className = 'small-btn edit-btn';
+        edit.className = 'small-btn ghost-btn';
         edit.textContent = 'Edit';
         edit.onclick = () => editHabit(index);
 
         const del = document.createElement('button');
-        del.className = 'small-btn delete-btn';
+        del.className = 'small-btn danger-btn';
         del.textContent = 'X';
         del.onclick = () => deleteHabit(index);
 
-        div.appendChild(time);
-        div.appendChild(span);
-        div.appendChild(edit);
-        div.appendChild(del);
+        actions.append(edit, del);
+        div.append(time, text, actions);
         list.appendChild(div);
       });
 
@@ -279,92 +589,127 @@
       const habitInput = document.getElementById('habitInput');
       const time = timeInput.value.trim() || 'Anytime';
       const text = habitInput.value.trim();
-      if (!text) return;
-      habits.push({ time: time, text: text, done: false });
+      if (!text) return showToast('Type a habit first');
+
+      habits.push({ time, text, done: false });
       timeInput.value = '';
       habitInput.value = '';
-      saveHabits();
+      saveHabits(false);
       renderHabits();
+      showToast('Added');
     }
 
     function toggleHabit(index) {
       habits[index].done = !habits[index].done;
-      saveHabits();
+      saveHabits(false);
       renderHabits();
     }
 
     function editTime(index) {
       const newTime = prompt('Edit the time:', habits[index].time || 'Anytime');
-      if (newTime && newTime.trim() !== '') {
-        habits[index].time = newTime.trim();
-        saveHabits();
-        renderHabits();
-      }
+      if (!newTime || !newTime.trim()) return;
+      habits[index].time = newTime.trim();
+      saveHabits(false);
+      renderHabits();
+      showToast('Updated');
     }
 
     function editHabit(index) {
       const newTime = prompt('Edit the time:', habits[index].time || 'Anytime');
       const newText = prompt('Edit what to do:', habits[index].text);
-      if (newTime && newTime.trim() !== '') habits[index].time = newTime.trim();
-      if (newText && newText.trim() !== '') habits[index].text = newText.trim();
-      saveHabits();
+      if (newTime && newTime.trim()) habits[index].time = newTime.trim();
+      if (newText && newText.trim()) habits[index].text = newText.trim();
+      saveHabits(false);
       renderHabits();
+      showToast('Updated');
     }
 
     function deleteHabit(index) {
       habits.splice(index, 1);
-      saveHabits();
+      saveHabits(false);
       renderHabits();
+      showToast('Deleted');
     }
 
-    function saveHabits() {
-      localStorage.setItem('habits', JSON.stringify(habits));
+    function saveHabits(show = true) {
+      saveJSON(STORAGE.habits, habits);
+      if (show) showToast('Schedule saved');
     }
 
     function resetHabits() {
-      localStorage.removeItem('habits');
-      location.reload();
+      if (!confirm('Reset your schedule back to default?')) return;
+      habits = structuredClone(defaultHabits);
+      saveHabits(false);
+      renderHabits();
+      showToast('Schedule reset');
+    }
+
+    function resetToday() {
+      habits = habits.map(habit => ({ ...habit, done: false }));
+      tasks = tasks.map(task => ({ ...task, done: false }));
+      saveHabits(false);
+      saveTasks(false);
+      renderHabits();
+      renderTasks();
+      setRandomQuote();
+      showToast('Today reset');
     }
 
     function updateStats() {
       const done = habits.filter(h => h.done).length;
       const total = habits.length;
+      const score = total ? Math.round((done / total) * 100) : 0;
+
       document.getElementById('doneCount').textContent = done;
       document.getElementById('totalCount').textContent = total;
-      document.getElementById('percent').textContent = total ? Math.round((done / total) * 100) + '%' : '0%';
+      document.getElementById('percent').textContent = score + '%';
+      document.getElementById('progressText').textContent = done + ' of ' + total + ' complete';
+      document.getElementById('progressFill').style.width = score + '%';
     }
 
     function renderTasks() {
       const list = document.getElementById('taskList');
       list.innerHTML = '';
+
+      if (!tasks.length) {
+        const empty = document.createElement('p');
+        empty.className = 'hint';
+        empty.textContent = 'No extra tasks yet.';
+        list.appendChild(empty);
+        return;
+      }
+
       tasks.forEach((task, index) => {
         const li = document.createElement('li');
-        const span = document.createElement('span');
-        span.innerHTML = '<span class="task-time">' + (task.time || 'Anytime') + '</span>' + (task.done ? '✅ ' : '⬜ ') + task.text;
-        span.style.cursor = 'pointer';
-        span.onclick = () => {
-          tasks[index].done = !tasks[index].done;
-          saveTasks();
-          renderTasks();
-        };
+
+        const main = document.createElement('div');
+        main.className = 'task-main' + (task.done ? ' task-done' : '');
+        main.onclick = () => toggleTask(index);
+
+        const time = document.createElement('span');
+        time.className = 'task-time';
+        time.textContent = task.time || 'Anytime';
+
+        const text = document.createElement('span');
+        text.textContent = (task.done ? '✅ ' : '⬜ ') + task.text;
+
+        main.append(time, text);
+
+        const actions = document.createElement('div');
+        actions.className = 'item-actions';
 
         const edit = document.createElement('button');
-        edit.className = 'small-btn edit-btn';
+        edit.className = 'small-btn ghost-btn';
         edit.textContent = 'Edit';
         edit.onclick = () => editTask(index);
 
         const del = document.createElement('button');
-        del.className = 'small-btn delete-btn';
+        del.className = 'small-btn danger-btn';
         del.textContent = 'X';
-        del.onclick = () => {
-          tasks.splice(index, 1);
-          saveTasks();
-          renderTasks();
-        };
+        del.onclick = () => deleteTask(index);
 
-        li.appendChild(span);
-        li.appendChild(edit);
-        li.appendChild(del);
+        actions.append(edit, del);
+        li.append(main, actions);
         list.appendChild(li);
       });
     }
@@ -374,54 +719,81 @@
       const taskInput = document.getElementById('taskInput');
       const time = timeInput.value.trim() || 'Anytime';
       const text = taskInput.value.trim();
-      if (!text) return;
-      tasks.push({ time: time, text: text, done: false });
+      if (!text) return showToast('Type a task first');
+
+      tasks.push({ time, text, done: false });
       timeInput.value = '';
       taskInput.value = '';
-      saveTasks();
+      saveTasks(false);
+      renderTasks();
+      showToast('Task added');
+    }
+
+    function toggleTask(index) {
+      tasks[index].done = !tasks[index].done;
+      saveTasks(false);
       renderTasks();
     }
 
     function editTask(index) {
       const newTime = prompt('Edit task time:', tasks[index].time || 'Anytime');
       const newText = prompt('Edit task:', tasks[index].text);
-      if (newTime && newTime.trim() !== '') tasks[index].time = newTime.trim();
-      if (newText && newText.trim() !== '') tasks[index].text = newText.trim();
-      saveTasks();
+      if (newTime && newTime.trim()) tasks[index].time = newTime.trim();
+      if (newText && newText.trim()) tasks[index].text = newText.trim();
+      saveTasks(false);
       renderTasks();
+      showToast('Task updated');
     }
 
-    function saveTasks() {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveTasks(false);
+      renderTasks();
+      showToast('Task deleted');
+    }
+
+    function saveTasks(show = true) {
+      saveJSON(STORAGE.tasks, tasks);
+      if (show) showToast('Tasks saved');
     }
 
     function clearTasks() {
       tasks = [];
-      saveTasks();
+      saveTasks(false);
       renderTasks();
+      showToast('Tasks cleared');
     }
 
     function saveNotes(id) {
-      localStorage.setItem(id, document.getElementById(id).value);
-      alert('Saved.');
+      const key = id === 'workoutNotes' ? STORAGE.workout : STORAGE.summary;
+      localStorage.setItem(key, document.getElementById(id).value);
+      showToast('Saved');
     }
 
     function saveHeader() {
-      localStorage.setItem('mainTitle', document.getElementById('mainTitle').innerText);
-      localStorage.setItem('mainDesc', document.getElementById('mainDesc').innerText);
-      localStorage.setItem('mainQuote', document.getElementById('mainQuote').innerText);
-      alert('Saved.');
+      localStorage.setItem(STORAGE.title, document.getElementById('mainTitle').innerText.trim());
+      localStorage.setItem(STORAGE.desc, document.getElementById('mainDesc').innerText.trim());
+      showToast('Title saved');
     }
 
-    window.onload = function() {
-      document.getElementById('workoutNotes').value = localStorage.getItem('workoutNotes') || '';
-      document.getElementById('daySummary').value = localStorage.getItem('daySummary') || '';
-      document.getElementById('mainTitle').innerText = localStorage.getItem('mainTitle') || document.getElementById('mainTitle').innerText;
-      document.getElementById('mainDesc').innerText = localStorage.getItem('mainDesc') || document.getElementById('mainDesc').innerText;
-      document.getElementById('mainQuote').innerText = localStorage.getItem('mainQuote') || document.getElementById('mainQuote').innerText;
+    function loadHeader() {
+      const title = localStorage.getItem(STORAGE.title);
+      const desc = localStorage.getItem(STORAGE.desc);
+      if (title) document.getElementById('mainTitle').innerText = title;
+      if (desc) document.getElementById('mainDesc').innerText = desc;
+    }
+
+    function init() {
+      setTodayBadge();
+      loadHeader();
+      document.getElementById('workoutNotes').value = localStorage.getItem(STORAGE.workout) || '';
+      document.getElementById('daySummary').value = localStorage.getItem(STORAGE.summary) || '';
+      setRandomQuote();
       renderHabits();
       renderTasks();
-    };
+    }
+
+    init();
   </script>
 </body>
 </html>
